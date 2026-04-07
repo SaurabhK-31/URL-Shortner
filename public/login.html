@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Snip — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --border: #222;
+            --accent: #e8ff47;
+            --accent-dim: #b8cc2a;
+            --text: #f0f0f0;
+            --muted: #666;
+            --error: #ff5b5b;
+            --success: #47ffa0;
+            --mono: 'DM Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+            --display: 'Bebas Neue', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(232,255,71,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(232,255,71,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(232,255,71,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .logo {
+            font-family: var(--display);
+            font-size: 2.5rem;
+            letter-spacing: 6px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .logo span { color: var(--text); }
+
+        .tagline {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease forwards;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0.6rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: #0a0a0a;
+        }
+
+        /* Form */
+        .form { display: flex; flex-direction: column; gap: 1rem; }
+
+        .field label {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field input::placeholder { color: var(--muted); }
+        .field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(232,255,71,0.08);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: var(--display);
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover { background: var(--accent-dim); }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .msg {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 0.75rem;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .msg.error { display: block; color: var(--error); background: rgba(255,91,91,0.08); border: 1px solid rgba(255,91,91,0.2); }
+        .msg.success { display: block; color: var(--success); background: rgba(71,255,160,0.08); border: 1px solid rgba(71,255,160,0.2); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="logo">SN<span>IP</span></div>
+    <div class="tagline">URL Shortener · Sign in to track your links</div>
+
+    <div class="card">
+        <div class="tabs">
+            <button class="tab active" id="loginTab" onclick="showTab('login')">Login</button>
+            <button class="tab" id="registerTab" onclick="showTab('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="form">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+                </div>
+                <button class="btn-submit" onclick="login()">LOGIN</button>
+            </div>
+            <div class="msg" id="loginMsg"></div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" style="display:none">
+            <div class="form">
+                <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="regName" placeholder="Your name"/>
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email"/>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password"/>
+                </div>
+                <button class="btn-submit" onclick="register()">CREATE ACCOUNT</button>
+            </div>
+            <div class="msg" id="registerMsg"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = 'http://localhost:8000';
+
+    // Redirect if already logged in
+    fetch(`${BASE_URL}/auth/me`, { credentials: 'include' })
+        .then(r => r.ok ? window.location.href = '/' : null)
+        .catch(() => {});
+
+    function showTab(tab) {
+        document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+        document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+        document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+    }
+
+    function showMsg(id, text, type) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = `msg ${type}`;
+    }
+
+    async function login() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) return showMsg('loginMsg', 'All fields are required.', 'error');
+
+        try {
+            const res = await fetch(`${BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) return showMsg('loginMsg', data.error, 'error');
+            showMsg('loginMsg', `Welcome back! Redirecting...`, 'success');
+            setTimeout(() => window.location.href = '/', 800);
+        } catch {
+            showMsg('loginMsg', 'Could not connect to server.', 'error');
+        }
+    }
+
+    async function register() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        if (!name || !email || !password) return showMsg('registerMsg', 'All fields are required.', 'error');
+
+        try {
+            const res = await fetch(`${BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) return showMsg('registerMsg', data.error, 'error');
+            showMsg('registerMsg', 'Account created! Redirecting...', 'success');
+            setTimeout(() => window.location.href = '/', 800);
+        } catch {
+            showMsg('registerMsg', 'Could not connect to server.', 'error');
+        }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        if (document.getElementById('loginForm').style.display !== 'none') login();
+        else register();
+    });
+</script>
+</body>
+</html>
