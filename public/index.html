@@ -218,7 +218,7 @@
 </div>
 
 <script>
-    const BASE_URL = 'http://localhost:8000';
+    const BASE_URL = '' ;
     let currentUser = null;
 
     async function init() {
@@ -276,7 +276,7 @@
         }
 
         list.innerHTML = urls.map(u => {
-            const shortURL = `${BASE_URL}/${u.id}`;
+            const shortURL = `${window.location.origin}/${u.id}`;
             const date = new Date(u.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
             return `
                 <div class="history-item">
@@ -358,7 +358,7 @@
             const data = await res.json();
             if (!res.ok) { showError(data.error || 'Something went wrong.'); return; }
 
-            const shortURL = `${BASE_URL}/${data.id}`;
+            const shortURL = `${window.location.origin}/${data.id}`;
             document.getElementById('resultURL').textContent = shortURL;
             resultBox.classList.add('show');
             document.getElementById('copyBtn').textContent = 'COPY';

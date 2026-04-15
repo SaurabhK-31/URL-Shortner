@@ -6,6 +6,7 @@ const { connectMongoDB } = require('./connect');
 const urlRoute = require('./routes/url_routes');
 const authRoute = require('./routes/auth_routes');
 const url = require('./models/url_db');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -20,6 +21,11 @@ app.use('/url', urlRoute);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors({
+    origin: process.env.SITE_URL || 'http://localhost:8000',
+    credentials: true
+}));
 
 // Redirect short URL
 app.get('/:short_id', async (req, res) => {
